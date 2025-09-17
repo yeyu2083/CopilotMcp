@@ -105,3 +105,8 @@ Thumbs.db
 
 # Docker
 .dockerignore
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

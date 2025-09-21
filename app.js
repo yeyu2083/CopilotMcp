@@ -40,6 +40,47 @@ const PORT = process.env.PORT || 3000;
 // Middleware para servir archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static('public'));
 
+// Middleware para parsear JSON en las peticiones
+app.use(express.json());
+
+// Credenciales hardcoded para demo
+const VALID_CREDENTIALS = {
+    'admin': '123456',
+    'user': 'password'
+};
+
+// Endpoint de login
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    // Validar que se proporcionen ambos campos
+    if (!username || !password) {
+        return res.status(400).json({
+            success: false,
+            message: 'Usuario y contraseña son requeridos'
+        });
+    }
+    
+    // Validar credenciales
+    if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+        return res.json({
+            success: true,
+            message: 'Login exitoso',
+            user: username
+        });
+    } else {
+        return res.status(401).json({
+            success: false,
+            message: 'Credenciales inválidas'
+        });
+    }
+});
+
+// Ruta para servir la página de login
+app.get('/login', (req, res) => {
+    res.sendFile('/public/login.html', { root: __dirname });
+});
+
 // Ruta principal - ahora con base de datos
 app.get('/', async (req, res) => {
     try {
@@ -108,6 +149,12 @@ app.get('/', async (req, res) => {
                         </div>
                         
                         <p><small>🔄 Recarga la página para ver el contador aumentar</small></p>
+                        
+                        <div style="margin-top: 20px;">
+                            <a href="/login" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 5px; display: inline-block;">
+                                🔐 Ir al Login Demo
+                            </a>
+                        </div>
                     </div>
                 </body>
             </html>
